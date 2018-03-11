@@ -1,0 +1,116 @@
+///////////////////////////////////////////////////////
+
+class Headline extends React.Component {
+  render() {
+    return (
+      <div className="text-center">
+        <h1>Pomodoro Clock</h1>
+      </div>  
+    );
+  }
+}
+
+class Clock extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { 
+      seconds: 59,
+      minutes: 25
+    };
+
+    this.minusSeconds = this.minusSeconds.bind(this);
+    this.minusMinutes = this.minusMinutes.bind(this);
+  }    
+
+  minusSeconds() {
+    if (this.state.seconds > 10) {
+      this.setState((prevState, props) => ({
+        seconds: prevState.seconds - 1
+      }));
+    } else if (this.state.seconds <= 10 && this.state.seconds > 0) {
+      this.setState((prevState, props) => ({
+        seconds: "0" + (prevState.seconds - 1)
+      }))
+    } else {
+      this.setState({ seconds: 59 });
+    }
+  }
+
+  minusMinutes() {
+    if (this.state.seconds == 0) {
+      this.setState((prevState, props) => ({
+        minutes: prevState.minutes - 1
+      }));
+    } else if (this.state.minutes == 0) {
+      alert("Take a 5 minute break!");
+      this.setState( { minutes: 25 } );
+      clearInterval(this.timer);
+    }      
+  }
+
+  pomodoroClock() {
+    this.minusSeconds();
+    this.minusMinutes();      
+  }
+
+  start() {    
+    clearInterval(this.timer);
+    this.timer = setInterval(this.pomodoroClock.bind(this), 1000);
+  }
+
+  stop() {
+    clearInterval(this.timer);
+  }
+
+  reset() {
+    clearInterval(this.timer);
+    this.setState( {seconds: 59} );
+    this.setState( {minutes: 25} );
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+
+  render() {
+    return (
+      <div className="text-center">
+
+        <div className="row" id="timer">
+          <div className="col-sm-4"></div>
+          <div className="col-xs-12 col-sm-4">
+            <span id="min">{this.state.minutes}</span>:<span id="sec">{this.state.seconds}</span>
+          </div>
+          <div className="col-sm-4"></div>
+        </div>
+
+        <div className="row text-center">
+          <div className="col-sm"></div>
+          <button onClick={this.start.bind(this)} type="button" className="col-sm btn btn-primary" id="start">Start</button>
+          <button onClick={this.stop.bind(this)} type="button" className="col-sm btn btn-danger" id="stop">Stop</button>
+          <button onClick={this.reset.bind(this)} type="button" className="col-sm btn btn-info" id="reset">Reset</button>
+          <div className="col-sm"></div>
+        </div>  
+
+      </div>      
+    );
+  }
+}
+
+class App extends React.Component {
+  render() {
+    return (
+      <div>
+        <Headline />
+        <Clock />
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <App />,
+  document.getElementById('root')
+);
+
+
